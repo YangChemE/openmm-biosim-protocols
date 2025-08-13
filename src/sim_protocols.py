@@ -109,7 +109,7 @@ def plain_complex_md_protocol(
     md_prolif_csv_name = 'md_prolif.csv'
     md_trj_prolif_csv_name = 'md_trj_prolif.csv'
     md_prolif_pkl_name = 'md_prolif.pkl'
-    md_trj_prolif_frequency_plot_name = 'md_trj_prolif_frequency_plot.png'
+    md_trj_ifp_plot_name = 'md_trj_ifp_plot.png'
     md_trj_rmsd_plot_name = 'md_trj_rmsd_plot.png'
 
     
@@ -412,7 +412,7 @@ def plain_complex_md_protocol(
         
         logger.info(f"Finished processing the trajectory of the rep {rep_id}. Making the ifp and rmsd plot.")
         # make the ifp freq plot
-        plot_trj_ifp(complex_pdb, complex_trj_file, rep_dir, md_trj_prolif_frequency_plot_name)
+        plot_trj_ifp(complex_pdb, complex_trj_file, rep_dir, md_trj_ifp_plot_name)
         
         # make rmsd plot
         plot_trj_rmsd(os.path.join(working_dir, ini_complex_pdb_name), complex_trj_file, rep_dir, md_trj_rmsd_plot_name)
@@ -727,32 +727,6 @@ if __name__ == '__main__':
         
         
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     
     

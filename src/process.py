@@ -616,8 +616,8 @@ def production_bpmd_score(
     steps_per_ps = int(1/(time_step)) # number of steps per ps
     report_interval = int(steps_per_ns / 10) # report every 100 ps
     n_steps = int(run_time * 1000 / time_step)  # in steps
-    trj_file = os.path.join(out_dir, f'rep_{idx}_md.xtc')
-    log_file = os.path.join(out_dir, f'rep_{idx}_log.csv')
+    trj_file = os.path.join(out_dir, f'md_trj.xtc')
+    log_file = os.path.join(out_dir, f'md_log.csv')
     
     ## define system to run metadynamics
     system = ff.createSystem(
@@ -726,8 +726,8 @@ def production_bpmd_score(
     ## save the final structure    
     final_positions = simulation.context.getState(
         getPositions=True, enforcePeriodicBox = True).getPositions()
-    out_sys_pdb = os.path.join(out_dir, f"rep_{idx}_sys_{md_pdb_name}")
-    out_complex_pdb = os.path.join(out_dir, f"rep_{idx}_complex_{md_pdb_name}")
+    out_sys_pdb = os.path.join(out_dir, f"{md_pdb_name}")
+    out_complex_pdb = os.path.join(out_dir, f"md_complex.pdb")
     PDBFile.writeFile(simulation.topology, final_positions,open(out_sys_pdb, 'w'), keepIds=True)
     mda.Universe(out_sys_pdb).select_atoms('protein or resname UNK').write(out_complex_pdb)
     
@@ -743,15 +743,15 @@ def production_bpmd_score(
     with mda.Writer(trj_file.replace('.xtc', '_pbc.xtc'), u_md.atoms.n_atoms) as W:
         for ts in u_md.trajectory:
             W.write(u_md.atoms)        
-    with mda.Writer(os.path.join(out_dir, f"rep_{idx}_complex_md.xtc"), pro_lig.n_atoms) as W:
+    with mda.Writer(os.path.join(out_dir, f"md_complex_trj.xtc"), pro_lig.n_atoms) as W:
         for ts in u_md.trajectory:
             W.write(pro_lig.atoms)
             
     u_md.trajectory[-1]
     u_md.atoms.write(out_sys_pdb)
     u_md.select_atoms('protein or resname UNK').atoms.write(out_complex_pdb)
-    u_md.select_atoms('protein').atoms.write(os.path.join(out_dir, f"rep_{idx}_pro.pdb"))
-    u_md.select_atoms('resname UNK').atoms.write(os.path.join(out_dir, f"rep_{idx}_lig.pdb"))
+    u_md.select_atoms('protein').atoms.write(os.path.join(out_dir, f"md_pro.pdb"))
+    u_md.select_atoms('resname UNK').atoms.write(os.path.join(out_dir, f"md_lig.pdb"))
     
     if sim_type == "plain": # for plain MD, the RMSD score is the mean rmsd over the trajectory
         rmsd_score = np.mean(colvar_array[:,0])
@@ -760,23 +760,23 @@ def production_bpmd_score(
         
     plot_trj_ifp(
         out_complex_pdb, 
-        os.path.join(out_dir, f"rep_{idx}_complex_md.xtc"), 
+        os.path.join(out_dir, f"md_complex_trj.xtc"), 
         out_dir,
-        f"rep_{idx}_ifp.png"
+        f"md_trj_ifp_plot.png"
     )
     
     plot_trj_rmsd(
         ref_complex_pdb,
-        os.path.join(out_dir, f"rep_{idx}_complex_md.xtc"),
+        os.path.join(out_dir, f"md_complex_trj.xtc"),
         out_dir,
-        f"rep_{idx}_rmsd.png"
+        f"md_trj_rmsd_plot.png"
     )
         
     trj_ifp_df = get_complex_prolif(
         out_complex_pdb, 
-        os.path.join(out_dir, f"rep_{idx}_complex_md.xtc"), 
-        os.path.join(out_dir, f"rep_{idx}_prolif.csv"),
-        os.path.join(out_dir, f"ref_{idx}_prolif.pkl")
+        os.path.join(out_dir, f"md_complex_trj.xtc"), 
+        os.path.join(out_dir, f"trj_prolif.csv"),
+        os.path.join(out_dir, f"trj_prolif.pkl")
     )
     
     
@@ -1466,4 +1466,3 @@ if __name__ == '__main__':
     )
         
     print(f"Simulation finished. RMSD scores: {rmsds}, label: {label}")
-
