@@ -1006,11 +1006,11 @@ def trj_cluster(working_dir, n_reps, lig_resname = 'UNK'):
     complex_trj_file_list = []
     for i in range(n_reps):
         rep_id = i+1
-        complex_trj_file_list.append(os.path.join(working_dir, f"rep_{rep_id}/rep_{rep_id}_complex_md.xtc"))
+        complex_trj_file_list.append(os.path.join(working_dir, f"rep_{rep_id}/md_complex_trj.xtc"))
     sys_trj_file_list = []
     for i in range(n_reps):
         rep_id = i+1
-        sys_trj_file_list.append(os.path.join(working_dir, f"rep_{rep_id}/rep_{rep_id}_md.xtc"))
+        sys_trj_file_list.append(os.path.join(working_dir, f"rep_{rep_id}/md_trj_pbc.xtc"))
         
     # load the trajectory
     complex_topol_file = os.path.join(working_dir, 'ini_complex.pdb')
